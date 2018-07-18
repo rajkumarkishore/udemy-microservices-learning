@@ -2,10 +2,16 @@ package com.kishore.udemy.restfulwebservices.user;
 
 import java.util.Date;
 
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
+
 public class User {
 
 	private Integer id;
+
+	@Size(min = 2, max = 5, message = "Size of name must be between 2 to 5" )
 	private String name;
+	@Past
 	private Date birthDate;
 
 	public User() {

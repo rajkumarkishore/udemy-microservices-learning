@@ -38,4 +38,11 @@ public class UserDaoService {
 		return user;
 	}
 
+	// delete
+	public User deleteById(int id) {
+		User user = users.stream().filter(u -> u.getId() == id).findAny().orElse(null);
+		users.remove(user);
+		return user;
+	}
+
 }
