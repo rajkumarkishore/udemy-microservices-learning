@@ -1,11 +1,16 @@
 package com.kishore.udemy.restfulwebservices.user;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.net.URI;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,12 +34,31 @@ public class UserResource {
 
 	// GET /users/1
 	@GetMapping(path = "/users/{id}")
-	public User retrieveUser(@PathVariable int id) {
+	public User retrieveUserV1(@PathVariable int id) {
 		User user = service.findOne(id);
 		if (user == null) {
 			throw new UserNotFoundException("id-" + id);
 		}
+
 		return user;
+	}
+
+	@GetMapping(path = "/users/hateoas/{id}")
+	public Resource<User> retrieveUser(@PathVariable int id) {
+		User user = service.findOne(id);
+		if (user == null) {
+			throw new UserNotFoundException("id-" + id);
+		}
+
+		Resource<User> resource = new Resource<>(user);
+
+		// all-users SERVER_PATH + /users
+		// retrieveAllusers
+		ControllerLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+		resource.add(linkTo.withRel("all-users"));
+		
+		// HATEOAS
+		return resource;
 	}
 
 	// POST
